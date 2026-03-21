@@ -7,6 +7,9 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#1a5c38">
 <link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" sizes="512x512" href="icon-512.png">
+<link rel="shortcut icon" href="icon-192.png" type="image/png">
 <title>Mis Plantas</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -109,15 +112,15 @@ textarea.sh-input{resize:vertical;min-height:80px}
 .empty{text-align:center;padding:50px 20px;color:#aaa;font-size:14px}
 .del-btn{background:none;border:none;color:#e24b4a;font-size:13px;cursor:pointer;text-decoration:underline;font-family:Arial,sans-serif;margin-top:10px;display:block;width:100%;text-align:center}
 /* SEASON BAR */
-.season-bar{background:#fff;border-bottom:1px solid #ddd;padding:8px 16px;display:flex;align-items:center;gap:8px}
-.season-label{font-size:12px;color:#888;font-weight:bold;white-space:nowrap}
-.season-btns{display:flex;gap:5px;flex:1}
-.s-btn{flex:1;border:1px solid #ccc;background:#f8f8f8;border-radius:10px;padding:7px 2px;font-size:11px;font-weight:bold;cursor:pointer;font-family:Arial,sans-serif;color:#555;text-align:center}
+.season-bar{background:#fff;border-bottom:1px solid #ddd;padding:6px 12px;display:flex;flex-direction:column;gap:5px}
+.season-label{font-size:11px;color:#888;font-weight:bold}
+.season-btns{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:5px}
+.s-btn{border:1px solid #ccc;background:#f8f8f8;border-radius:9px;padding:6px 2px;font-size:11px;font-weight:bold;cursor:pointer;font-family:Arial,sans-serif;color:#555;text-align:center;white-space:nowrap}
 .s-btn.sp{background:#d4edda;border-color:#52b788;color:#1a5c38}
 .s-btn.su{background:#fff3cd;border-color:#ffc107;color:#7d5200}
 .s-btn.au{background:#ffe5cc;border-color:#e07b20;color:#7a3c00}
 .s-btn.wi{background:#d6eaf8;border-color:#5dade2;color:#1a4e6e}
-.season-info{font-size:11px;color:#aaa;white-space:nowrap}
+.season-info{font-size:11px;color:#aaa;text-align:center}
 </style>
 </head>
 <body>
@@ -143,7 +146,6 @@ textarea.sh-input{resize:vertical;min-height:80px}
 
 <!-- SEASON BAR -->
 <div class="season-bar">
-  <div class="season-label">Estacion:</div>
   <div class="season-btns">
     <button class="s-btn" id="sBtn0" onclick="setSeason(0)">Primavera</button>
     <button class="s-btn" id="sBtn1" onclick="setSeason(1)">Verano</button>

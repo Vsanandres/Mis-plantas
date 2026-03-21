@@ -1,5 +1,5 @@
 // sw.js — Service Worker para notificaciones de riego
-var CACHE = 'plantas-v2';
+var CACHE = 'plantas-v3';
 
 // ── INSTALL & CACHE ───────────────────────────────────
 self.addEventListener('install', function(e){
