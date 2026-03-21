@@ -734,27 +734,43 @@ function toast(msg){
 // ── NOTIFICATIONS & REMINDERS ────────────────────────
 var inappQueue=[];
 var inappShowing=false;
-var reminderTimers=[];
 var notifGranted=false;
 
-// Register service worker
+// ── SERVICE WORKER REGISTRATION ───────────────────────
 if('serviceWorker' in navigator){
-  navigator.serviceWorker.register('sw.js').then(function(reg){
-    console.log('SW registered');
-  }).catch(function(e){console.log('SW error',e);});
+  navigator.serviceWorker.register('./sw.js').then(function(reg){
+    console.log('SW ok:', reg.scope);
+    // Try to register periodic sync (Chrome Android supports this)
+    if(reg.periodicSync){
+      reg.periodicSync.register('water-check', {minInterval: 3*60*60*1000})
+        .catch(function(){console.log('PeriodicSync not available');});
+    }
+  }).catch(function(e){console.log('SW error:',e);});
 }
 
+// ── TOGGLE NOTIFICATIONS BUTTON ───────────────────────
 function toggleReminders(){
+  if(!('Notification' in window)){
+    toast('Tu navegador no soporta notificaciones');
+    return;
+  }
   if(Notification.permission==='granted'){
+    // Already granted — just re-sync schedule
     notifGranted=true;
-    activateReminders();
+    setRemBtn(true);
+    syncScheduleToSW();
+    checkUrgentNow();
+    toast('Recordatorios sincronizados');
   } else if(Notification.permission==='denied'){
-    toast('Notificaciones bloqueadas. Activalas en ajustes del navegador.');
+    toast('Bloqueadas. Ve a ajustes del navegador y activa permisos para este sitio.');
   } else {
+    // Ask permission
     Notification.requestPermission().then(function(perm){
       if(perm==='granted'){
         notifGranted=true;
-        activateReminders();
+        setRemBtn(true);
+        syncScheduleToSW();
+        checkUrgentNow();
         toast('Notificaciones activadas');
       } else {
         toast('Permiso denegado');
@@ -763,87 +779,73 @@ function toggleReminders(){
   }
 }
 
-function activateReminders(){
+function setRemBtn(on){
   var btn=document.getElementById('remBtn');
-  btn.style.background='rgba(255,255,255,.45)';
-  btn.style.color='#1a5c38';
-  btn.textContent='ON';
-  checkUrgentNow();
-  scheduleAll();
-  // Store schedule in SW
-  syncScheduleToSW();
+  if(on){
+    btn.style.background='rgba(255,255,255,.45)';
+    btn.style.color='#1a5c38';
+    btn.textContent='ON';
+  } else {
+    btn.style.background='';
+    btn.style.color='';
+    btn.textContent='Avisos';
+  }
 }
 
+// ── SYNC SCHEDULE TO SW ───────────────────────────────
+// Sends next-water timestamps (not delays) so SW survives being killed
 function syncScheduleToSW(){
-  if(!('serviceWorker' in navigator))return;
+  if(!('serviceWorker' in navigator)) return;
   navigator.serviceWorker.ready.then(function(reg){
-    var schedule=plants.map(function(p){
-      var ms=Math.max(0,daysLeft(p))*86400000;
-      return {name:p.name, delayMs:ms, id:p.id};
+    if(!reg.active) return;
+    var schedule = plants.map(function(p){
+      var eff = getEffectiveDays(p);
+      var nextWaterAt = p.lw
+        ? new Date(p.lw).getTime() + eff*86400000
+        : Date.now(); // never watered = due now
+      var daysSince = p.lw
+        ? Math.floor((Date.now()-new Date(p.lw).getTime())/86400000)
+        : 0;
+      return {id:p.id, name:p.name, nextWaterAt:nextWaterAt, daysSince:daysSince};
     });
-    reg.active && reg.active.postMessage({type:'SCHEDULE', schedule:schedule});
+    reg.active.postMessage({type:'SCHEDULE', schedule:schedule});
   });
 }
 
+// ── IN-APP URGENT CHECK ───────────────────────────────
 function checkUrgentNow(){
   var urgent=plants.filter(function(p){return status(p)==='urgent';});
   var banner=document.getElementById('alertBanner');
   if(urgent.length>0){
-    document.getElementById('alertText').textContent='Necesitan agua hoy: '+urgent.map(function(p){return p.name;}).join(', ');
+    document.getElementById('alertText').textContent=
+      'Necesitan agua hoy: '+urgent.map(function(p){return p.name;}).join(', ');
     banner.classList.add('show');
-    // Push notification for urgent plants
     if(notifGranted){
-      urgent.forEach(function(p){
-        sendPushNotif(p.name+' necesita agua hoy', 'Lleva '+getEffectiveDays(p)+' dias sin regar. Tocala para marcarla.');
-      });
+      // Show one system notification summarising all urgent plants
+      navigator.serviceWorker.ready.then(function(reg){
+        reg.showNotification('Plantas con sed', {
+          body: urgent.map(function(p){return p.name;}).join(', ')+' necesitan agua hoy.',
+          icon: './icon-192.png',
+          badge: './icon-192.png',
+          tag: 'urgent-summary',
+          renotify: true,
+          vibrate: [200,100,200]
+        });
+      }).catch(function(){});
     }
     urgent.forEach(function(p){inappQueue.push(p);});
     showNextInapp();
+  } else {
+    banner.classList.remove('show');
   }
 }
 
-function sendPushNotif(title, body){
-  if(!notifGranted)return;
-  navigator.serviceWorker.ready.then(function(reg){
-    reg.showNotification(title,{
-      body: body,
-      icon: 'icon-192.png',
-      badge: 'icon-192.png',
-      tag: title,
-      renotify: false,
-      actions:[{action:'open', title:'Ver planta'}]
-    });
-  }).catch(function(){
-    // Fallback: basic Notification API
-    try{ new Notification(title,{body:body}); }catch(e){}
-  });
-}
-
-function scheduleAll(){
-  reminderTimers.forEach(function(t){clearTimeout(t);});
-  reminderTimers=[];
-  plants.forEach(function(p){
-    var ms=Math.max(0,daysLeft(p))*86400000;
-    if(ms>0){
-      var t=setTimeout(function(){
-        inappQueue.push(p);
-        showNextInapp();
-        document.getElementById('alertText').textContent='Necesita agua: '+p.name;
-        document.getElementById('alertBanner').classList.add('show');
-        sendPushNotif(p.name+' necesita agua', 'Han pasado '+getEffectiveDays(p)+' dias desde el ultimo riego.');
-      },ms);
-      reminderTimers.push(t);
-    }
-  });
-}
-
+// Called after watering a plant — re-sync SW schedule
 function notifSched(p){
-  reminderTimers.forEach(function(t){clearTimeout(t);});
-  reminderTimers=[];
-  scheduleAll();
-  if(notifGranted)syncScheduleToSW();
+  if(notifGranted) syncScheduleToSW();
 }
 
+// ── IN-APP NOTIFICATION CARDS ─────────────────────────
 function showNextInapp(){
   if(inappShowing||inappQueue.length===0)return;
   var p=inappQueue.shift();
@@ -858,13 +860,17 @@ function closeInapp(){
   setTimeout(function(){inappShowing=false;if(inappQueue.length>0)showNextInapp();},400);
 }
 
-// Check permission state on load
-if(Notification.permission==='granted'){
+// ── INIT: restore button state + ping SW ─────────────
+if(typeof Notification!=='undefined' && Notification.permission==='granted'){
   notifGranted=true;
-  var btn=document.getElementById('remBtn');
-  btn.style.background='rgba(255,255,255,.45)';
-  btn.style.color='#1a5c38';
-  btn.textContent='ON';
+  setRemBtn(true);
+  // Ping SW so it rechecks on app open
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.ready.then(function(reg){
+      if(reg.active) reg.active.postMessage({type:'PING'});
+      syncScheduleToSW();
+    });
+  }
 }
 
 // ── INIT ──────────────────────────────────────────────
