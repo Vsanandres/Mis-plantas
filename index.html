@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#1a5c38">
+<link rel="manifest" href="manifest.json">
+<title>Mis Plantas</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:Arial,Helvetica,sans-serif;max-width:480px;margin:0 auto;background:#f0faf4;min-height:100vh;padding-bottom:90px}
+/* TOP BAR */
+.topbar{background:#1a5c38;color:#fff;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.topbar-title{font-size:17px;font-weight:bold;letter-spacing:.5px}
+.topbar-right{display:flex;gap:8px;align-items:center}
+.icon-btn{background:rgba(255,255,255,.18);border:none;color:#fff;height:34px;border-radius:17px;cursor:pointer;font-size:12px;font-weight:bold;padding:0 12px;font-family:Arial,sans-serif}
+/* TABS */
+.tabs{display:flex;background:#fff;border-bottom:1px solid #ddd;position:sticky;top:57px;z-index:99}
+.tab{flex:1;padding:11px 4px;text-align:center;font-size:13px;font-weight:bold;color:#888;cursor:pointer;border-bottom:3px solid transparent}
+.tab.active{color:#1a5c38;border-bottom-color:#1a5c38}
+/* ALERT BANNER */
+.alert-banner{margin:10px 16px 0;background:#fff3cd;border:1px solid #ffc107;border-radius:12px;padding:11px 14px;display:none;align-items:center;gap:10px}
+.alert-banner.show{display:flex}
+.alert-text{font-size:13px;color:#7d5200;font-weight:bold;flex:1;line-height:1.4}
+.alert-close{background:none;border:none;font-size:16px;color:#7d5200;cursor:pointer;padding:0 4px}
+/* IN-APP NOTIFICATION */
+.inapp-wrap{position:fixed;top:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;z-index:1000;pointer-events:none}
+.inapp-card{background:#1a5c38;color:#fff;margin:10px 16px;border-radius:14px;padding:13px 16px;display:flex;align-items:center;gap:12px;pointer-events:all;box-shadow:0 4px 20px rgba(0,0,0,.25);transform:translateY(-140px);transition:transform .35s cubic-bezier(.34,1.56,.64,1)}
+.inapp-card.show{transform:translateY(0)}
+.inapp-body{flex:1}
+.inapp-title{font-size:14px;font-weight:bold}
+.inapp-sub{font-size:12px;opacity:.85;margin-top:2px}
+.inapp-close{background:rgba(255,255,255,.2);border:none;color:#fff;border-radius:50%;width:28px;height:28px;cursor:pointer;font-size:13px;font-weight:bold;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+/* SEARCH */
+.search-wrap{padding:10px 16px;background:#fff;border-bottom:1px solid #ddd}
+.search-wrap input{width:100%;padding:9px 14px;border-radius:22px;border:1px solid #ccc;font-size:14px;color:#222;outline:none;font-family:Arial,sans-serif}
+/* SUMMARY */
+.summary{margin:12px 16px 8px;background:#fff;border:1px solid #dde;border-radius:14px;display:flex}
+.stat{flex:1;text-align:center;padding:11px 4px}
+.stat-num{font-size:22px;font-weight:bold;color:#1a5c38}
+.stat-lbl{font-size:11px;color:#888;margin-top:2px}
+.stat+.stat{border-left:1px solid #dde}
+/* PLANT CARDS */
+.sec-label{padding:12px 16px 5px;font-size:11px;color:#999;font-weight:bold;text-transform:uppercase;letter-spacing:.8px}
+.card{margin:0 16px 10px;background:#fff;border-radius:16px;overflow:hidden;border:1px solid #dde}
+.card.urgent{border-left:4px solid #e24b4a}
+.card.soon{border-left:4px solid #ef9f27}
+.card.ok{border-left:4px solid #52b788}
+.card-body{padding:10px 12px;display:flex;align-items:center;gap:12px}
+.plant-fb{width:66px;height:66px;border-radius:13px;background:#d8f3dc;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;color:#1a5c38;font-weight:bold;text-align:center;padding:5px;line-height:1.3}
+.plant-info{flex:1;min-width:0}
+.plant-name{font-size:15px;font-weight:bold;color:#111;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.plant-sci{font-size:11px;color:#888;font-style:italic;margin-top:2px}
+.plant-st{display:flex;align-items:center;gap:6px;margin-top:6px}
+.dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.st-txt{font-size:12px;color:#666}
+.btns{display:flex;flex-direction:column;gap:7px;align-items:flex-end;flex-shrink:0}
+.btn-w{background:#1a5c38;color:#fff;border:none;border-radius:10px;padding:8px 11px;font-size:11px;font-weight:bold;cursor:pointer;font-family:Arial,sans-serif;white-space:nowrap}
+.btn-i{background:#d8f3dc;color:#1a5c38;border:1px solid #95d5b2;border-radius:10px;padding:8px 11px;font-size:11px;font-weight:bold;cursor:pointer;font-family:Arial,sans-serif;white-space:nowrap}
+/* STATS */
+.stats-page{padding:14px 16px;display:none}
+.stats-page.active{display:block}
+.stat-card{background:#fff;border:1px solid #dde;border-radius:14px;padding:14px 16px;margin-bottom:12px}
+.stat-card-title{font-size:12px;color:#888;font-weight:bold;text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px}
+.stat-big{font-size:28px;font-weight:bold;color:#1a5c38}
+.stat-desc{font-size:13px;color:#555;margin-top:3px}
+.bar-row{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.bar-label{font-size:12px;color:#444;min-width:110px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar-track{flex:1;background:#f0f0f0;border-radius:6px;height:10px;overflow:hidden}
+.bar-fill{height:10px;border-radius:6px;background:#52b788;transition:width .4s}
+.bar-val{font-size:11px;color:#888;min-width:28px;text-align:right}
+.history-item{padding:10px 0;border-bottom:1px solid #f0f0f0;display:flex;align-items:center;gap:10px}
+.history-item:last-child{border-bottom:none}
+.history-dot{width:10px;height:10px;border-radius:50%;background:#52b788;flex-shrink:0}
+.history-name{font-size:14px;font-weight:bold;color:#111}
+.history-date{font-size:12px;color:#888;margin-top:2px}
+.history-ago{font-size:12px;color:#52b788;margin-left:auto;font-weight:bold;white-space:nowrap}
+/* FAB */
+.fab{position:fixed;bottom:22px;right:20px;width:56px;height:56px;border-radius:28px;background:#1a5c38;color:#fff;border:none;font-size:30px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:200;box-shadow:0 3px 14px rgba(26,92,56,.4)}
+/* OVERLAYS & SHEETS */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:300;align-items:flex-end;justify-content:center}
+.overlay.open{display:flex}
+.sheet{background:#fff;border-radius:22px 22px 0 0;width:100%;max-width:480px;padding:20px 20px 40px;max-height:92vh;overflow-y:auto}
+.handle{width:38px;height:4px;background:#ccc;border-radius:2px;margin:0 auto 18px}
+.sh-title{font-size:18px;font-weight:bold;color:#111;margin-bottom:4px}
+.sh-sub{font-size:13px;color:#888;margin-bottom:14px}
+.sh-label{font-size:13px;color:#555;display:block;margin:11px 0 4px}
+.sh-input{width:100%;padding:10px 13px;border:1px solid #ccc;border-radius:11px;font-size:14px;color:#222;background:#f8f8f8;outline:none;font-family:Arial,sans-serif}
+textarea.sh-input{resize:vertical;min-height:80px}
+.sh-actions{display:flex;gap:10px;margin-top:16px}
+.btn-ok{flex:1;background:#1a5c38;color:#fff;border:none;border-radius:13px;padding:13px;font-size:15px;font-weight:bold;cursor:pointer;font-family:Arial,sans-serif}
+.btn-no{background:#f0f0f0;color:#666;border:1px solid #ccc;border-radius:13px;padding:13px 16px;font-size:15px;cursor:pointer;font-family:Arial,sans-serif}
+.btn-edit{background:#f0faf4;border:1px solid #95d5b2;border-radius:9px;padding:6px 12px;font-size:12px;color:#1a5c38;font-weight:bold;cursor:pointer;font-family:Arial,sans-serif}
+/* INFO SHEET ELEMENTS */
+.info-box{background:#f0faf4;border-radius:12px;padding:13px 15px;border-left:3px solid #52b788;margin-top:4px}
+.info-row{display:flex;gap:10px;margin-bottom:10px;align-items:flex-start}
+.info-row:last-child{margin-bottom:0}
+.info-lbl{font-size:12px;font-weight:bold;color:#1a5c38;min-width:68px;padding-top:2px;flex-shrink:0}
+.info-val{font-size:13px;color:#1b3a2a;line-height:1.6}
+/* UPLOAD */
+.upload-box{border:2px dashed #95d5b2;border-radius:12px;padding:14px;text-align:center;cursor:pointer;color:#555;font-size:13px;margin-top:4px;background:#f8fff8}
+.up-prev{width:100%;height:120px;object-fit:cover;border-radius:10px;margin-top:8px;display:none}
+/* TOAST & BADGE */
+.toast{position:fixed;top:68px;left:50%;transform:translateX(-50%);background:#1a5c38;color:#fff;padding:10px 20px;border-radius:22px;font-size:13px;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1}
+.badge{background:#e24b4a;color:#fff;border-radius:10px;font-size:11px;padding:2px 7px;margin-left:6px;font-weight:bold}
+.empty{text-align:center;padding:50px 20px;color:#aaa;font-size:14px}
+.del-btn{background:none;border:none;color:#e24b4a;font-size:13px;cursor:pointer;text-decoration:underline;font-family:Arial,sans-serif;margin-top:10px;display:block;width:100%;text-align:center}
+/* SEASON BAR */
+.season-bar{background:#fff;border-bottom:1px solid #ddd;padding:8px 16px;display:flex;align-items:center;gap:8px}
+.season-label{font-size:12px;color:#888;font-weight:bold;white-space:nowrap}
+.season-btns{display:flex;gap:5px;flex:1}
+.s-btn{flex:1;border:1px solid #ccc;background:#f8f8f8;border-radius:10px;padding:7px 2px;font-size:11px;font-weight:bold;cursor:pointer;font-family:Arial,sans-serif;color:#555;text-align:center}
+.s-btn.sp{background:#d4edda;border-color:#52b788;color:#1a5c38}
+.s-btn.su{background:#fff3cd;border-color:#ffc107;color:#7d5200}
+.s-btn.au{background:#ffe5cc;border-color:#e07b20;color:#7a3c00}
+.s-btn.wi{background:#d6eaf8;border-color:#5dade2;color:#1a4e6e}
+.season-info{font-size:11px;color:#aaa;white-space:nowrap}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div style="display:flex;align-items:center">
+    <span class="topbar-title">MIS PLANTAS</span>
+    <span class="badge" id="urgBadge" style="display:none">0</span>
+  </div>
+  <div class="topbar-right">
+    <button class="icon-btn" id="remBtn" onclick="toggleReminders()">Avisos</button>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <div class="tab active" id="tabPlants" onclick="switchTab('plants')">Plantas</div>
+  <div class="tab" id="tabHistory" onclick="switchTab('history')">Historial</div>
+  <div class="tab" id="tabStats" onclick="switchTab('stats')">Estadisticas</div>
+</div>
+
+
+<!-- SEASON BAR -->
+<div class="season-bar">
+  <div class="season-label">Estacion:</div>
+  <div class="season-btns">
+    <button class="s-btn" id="sBtn0" onclick="setSeason(0)">Primavera</button>
+    <button class="s-btn" id="sBtn1" onclick="setSeason(1)">Verano</button>
+    <button class="s-btn" id="sBtn2" onclick="setSeason(2)">Otono</button>
+    <button class="s-btn" id="sBtn3" onclick="setSeason(3)">Invierno</button>
+  </div>
+  <div class="season-info" id="seasonMult"></div>
+</div>
+<!-- IN-APP NOTIFICATION -->
+<div class="inapp-wrap"><div class="inapp-card" id="inappCard">
+  <div style="font-size:22px;flex-shrink:0">&#9749;</div>
+  <div class="inapp-body"><div class="inapp-title" id="inappTitle">Planta necesita agua</div><div class="inapp-sub" id="inappSub">Recuerda regarla hoy</div></div>
+  <button class="inapp-close" onclick="closeInapp()">X</button>
+</div></div>
+
+<!-- ALERT BANNER -->
+<div class="alert-banner" id="alertBanner">
+  <div class="alert-text" id="alertText"></div>
+  <button class="alert-close" onclick="this.parentElement.classList.remove('show')">X</button>
+</div>
+
+<!-- PLANTS TAB -->
+<div id="plantsPage">
+  <div class="search-wrap"><input type="text" placeholder="Buscar planta..." id="srch" oninput="render()"></div>
+  <div class="summary">
+    <div class="stat"><div class="stat-num" id="sU" style="color:#e24b4a">0</div><div class="stat-lbl">Urgente</div></div>
+    <div class="stat"><div class="stat-num" id="sS" style="color:#ba7517">0</div><div class="stat-lbl">Pronto</div></div>
+    <div class="stat"><div class="stat-num" id="sO">0</div><div class="stat-lbl">Al dia</div></div>
+  </div>
+  <div id="list"></div>
+</div>
+
+<!-- HISTORY TAB -->
+<div id="historyPage" class="stats-page">
+  <div class="stat-card">
+    <div class="stat-card-title">Ultimos riegos registrados</div>
+    <div id="historyList"><div class="empty">Aun no hay riegos registrados</div></div>
+  </div>
+</div>
+
+<!-- STATS TAB -->
+<div id="statsPage" class="stats-page">
+  <div class="stat-card">
+    <div class="stat-card-title">Resumen general</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px" id="statsGrid"></div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-card-title">Riegos por planta (total)</div>
+    <div id="statsBar"></div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-card-title">Planta mas regada</div>
+    <div id="statsMost"></div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-card-title">Planta mas olvidada</div>
+    <div id="statsLeast"></div>
+  </div>
+</div>
+
+<button class="fab" id="fabBtn" onclick="openAdd()">+</button>
+<div class="toast" id="toast"></div>
+
+<!-- ADD OVERLAY -->
+<div class="overlay" id="addOv" onclick="bgClose(event,'addOv')">
+  <div class="sheet">
+    <div class="handle"></div>
+    <div class="sh-title">Nueva planta</div>
+    <div class="sh-sub">Añade una planta a tu coleccion</div>
+    <label class="sh-label">Nombre *</label>
+    <input class="sh-input" type="text" id="nNm" placeholder="Ej: Monstera">
+    <label class="sh-label">Nombre cientifico</label>
+    <input class="sh-input" type="text" id="nSc" placeholder="Ej: Monstera deliciosa">
+    <label class="sh-label">Foto (desde tu movil)</label>
+    <div class="upload-box" onclick="document.getElementById('fUp').click()">
+      Toca aqui para subir foto
+      <input type="file" id="fUp" accept="image/*" style="display:none" onchange="prevPhoto(event,'fPrev',function(d){newPhoto=d})">
+      <img id="fPrev" class="up-prev">
+    </div>
+    <label class="sh-label">Dias entre riego por estacion</label>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px">
+      <div><div style="font-size:11px;color:#888;margin-bottom:3px">Primavera</div><input class="sh-input" type="number" id="nSp" min="1" max="90" value="7" style="padding:8px"></div>
+      <div><div style="font-size:11px;color:#888;margin-bottom:3px">Verano</div><input class="sh-input" type="number" id="nSu" min="1" max="90" value="5" style="padding:8px"></div>
+      <div><div style="font-size:11px;color:#888;margin-bottom:3px">Otono</div><input class="sh-input" type="number" id="nAu" min="1" max="90" value="10" style="padding:8px"></div>
+      <div><div style="font-size:11px;color:#888;margin-bottom:3px">Invierno</div><input class="sh-input" type="number" id="nWi" min="1" max="90" value="14" style="padding:8px"></div>
+    </div>
+    <label class="sh-label">Descripcion del riego</label>
+    <input class="sh-input" type="text" id="nWt" placeholder="Ej: 2 veces por semana">
+    <label class="sh-label">Luz / Ubicacion</label>
+    <input class="sh-input" type="text" id="nLt" placeholder="Ej: Luz indirecta brillante">
+    <label class="sh-label">Temperatura</label>
+    <input class="sh-input" type="text" id="nTp" placeholder="Ej: 18-27 C">
+    <label class="sh-label">Notas y cuidados extra</label>
+    <textarea class="sh-input" id="nNt" placeholder="Tips, curiosidades..."></textarea>
+    <div class="sh-actions">
+      <button class="btn-no" onclick="closeOv('addOv')">Cancelar</button>
+      <button class="btn-ok" onclick="addPlant()">Guardar planta</button>
+    </div>
+  </div>
+</div>
+
+<!-- INFO OVERLAY -->
+<div class="overlay" id="infoOv" onclick="bgClose(event,'infoOv')">
+  <div class="sheet" id="infoSheet"></div>
+</div>
+
+<!-- EDIT OVERLAY -->
+<div class="overlay" id="editOv" onclick="bgClose(event,'editOv')">
+  <div class="sheet">
+    <div class="handle"></div>
+    <div class="sh-title">Editar planta</div>
+    <div class="sh-sub" id="editSub"></div>
+    <label class="sh-label">Foto</label>
+    <div class="upload-box" id="editUpBox" onclick="document.getElementById('eFUp').click()">
+      Toca para cambiar la foto
+      <input type="file" id="eFUp" accept="image/*" style="display:none" onchange="prevPhoto(event,'ePrev',function(d){editPhoto=d})">
+      <img id="ePrev" class="up-prev">
+    </div>
+    <label class="sh-label">Nombre *</label>
+    <input class="sh-input" type="text" id="eNm">
+    <label class="sh-label">Nombre cientifico</label>
+    <input class="sh-input" type="text" id="eSc">
+    <label class="sh-label">Dias entre riego por estacion</label>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px">
+      <div><div style="font-size:11px;color:#888;margin-bottom:3px">Primavera</div><input class="sh-input" type="number" id="eSp" min="1" max="90" style="padding:8px"></div>
+      <div><div style="font-size:11px;color:#888;margin-bottom:3px">Verano</div><input class="sh-input" type="number" id="eSu" min="1" max="90" style="padding:8px"></div>
+      <div><div style="font-size:11px;color:#888;margin-bottom:3px">Otono</div><input class="sh-input" type="number" id="eAu" min="1" max="90" style="padding:8px"></div>
+      <div><div style="font-size:11px;color:#888;margin-bottom:3px">Invierno</div><input class="sh-input" type="number" id="eWi" min="1" max="90" style="padding:8px"></div>
+    </div>
+    <label class="sh-label">Descripcion del riego</label>
+    <input class="sh-input" type="text" id="eWt">
+    <label class="sh-label">Luz / Ubicacion</label>
+    <input class="sh-input" type="text" id="eLt">
+    <label class="sh-label">Temperatura</label>
+    <input class="sh-input" type="text" id="eTp">
+    <label class="sh-label">Notas y cuidados extra</label>
+    <textarea class="sh-input" id="eNt"></textarea>
+    <div class="sh-actions">
+      <button class="btn-no" onclick="closeOv('editOv')">Cancelar</button>
+      <button class="btn-ok" onclick="saveEdit()">Guardar cambios</button>
+    </div>
+    <button class="del-btn" onclick="deletePlant()">Eliminar esta planta</button>
+  </div>
+</div>
+
+<script>
+var SK = 'plants_v5';
+
+var SVGS = {
+1:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><rect width="200" height="200" fill="#c8e6c9"/><rect x="88" y="148" width="24" height="42" rx="5" fill="#795548"/><rect x="86" y="145" width="28" height="8" rx="3" fill="#6d4c41"/><line x1="100" y1="148" x2="28" y2="68" stroke="#2e7d32" stroke-width="5" stroke-linecap="round"/><line x1="100" y1="143" x2="172" y2="62" stroke="#2e7d32" stroke-width="5" stroke-linecap="round"/><line x1="100" y1="136" x2="45" y2="45" stroke="#388e3c" stroke-width="4" stroke-linecap="round"/><line x1="100" y1="130" x2="158" y2="50" stroke="#388e3c" stroke-width="4" stroke-linecap="round"/><line x1="100" y1="124" x2="68" y2="28" stroke="#43a047" stroke-width="3.5" stroke-linecap="round"/><line x1="100" y1="118" x2="136" y2="32" stroke="#43a047" stroke-width="3.5" stroke-linecap="round"/><line x1="100" y1="112" x2="100" y2="22" stroke="#2e7d32" stroke-width="3.5" stroke-linecap="round"/><ellipse cx="28" cy="65" rx="22" ry="7" fill="#66bb6a" transform="rotate(-32 28 65)"/><ellipse cx="172" cy="60" rx="22" ry="7" fill="#66bb6a" transform="rotate(32 172 60)"/><ellipse cx="45" cy="43" rx="20" ry="6" fill="#81c784" transform="rotate(-26 45 43)"/><ellipse cx="158" cy="48" rx="20" ry="6" fill="#81c784" transform="rotate(26 158 48)"/><ellipse cx="68" cy="26" rx="17" ry="6" fill="#66bb6a" transform="rotate(-12 68 26)"/><ellipse cx="136" cy="30" rx="17" ry="6" fill="#66bb6a" transform="rotate(12 136 30)"/><ellipse cx="100" cy="20" rx="15" ry="5" fill="#a5d6a7"/></svg>',
+2:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><rect width="200" height="200" fill="#e8f5e9"/><rect x="88" y="155" width="24" height="35" rx="5" fill="#795548"/><line x1="100" y1="155" x2="35" y2="78" stroke="#388e3c" stroke-width="4" stroke-linecap="round"/><line x1="100" y1="150" x2="165" y2="72" stroke="#388e3c" stroke-width="4" stroke-linecap="round"/><line x1="100" y1="142" x2="50" y2="52" stroke="#43a047" stroke-width="3" stroke-linecap="round"/><line x1="100" y1="136" x2="152" y2="56" stroke="#43a047" stroke-width="3" stroke-linecap="round"/><line x1="100" y1="128" x2="100" y2="38" stroke="#2e7d32" stroke-width="3" stroke-linecap="round"/><g stroke="#81c784" stroke-width="2.5" stroke-linecap="round"><line x1="35" y1="78" x2="12" y2="65"/><line x1="35" y1="78" x2="14" y2="82"/><line x1="35" y1="78" x2="10" y2="74"/><line x1="165" y1="72" x2="188" y2="60"/><line x1="165" y1="72" x2="187" y2="78"/><line x1="50" y1="52" x2="27" y2="40"/><line x1="50" y1="52" x2="28" y2="56"/><line x1="152" y1="56" x2="175" y2="44"/><line x1="152" y1="56" x2="176" y2="62"/><line x1="100" y1="38" x2="82" y2="26"/><line x1="100" y1="38" x2="118" y2="26"/><line x1="100" y1="38" x2="100" y2="18"/></g></svg>',
+3:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><rect width="200" height="200" fill="#e0f2f1"/><rect x="90" y="160" width="20" height="32" rx="4" fill="#795548"/><ellipse cx="72" cy="100" rx="42" ry="62" fill="#1b5e20" transform="rotate(-18 72 100)"/><ellipse cx="68" cy="97" rx="30" ry="50" fill="#43a047" transform="rotate(-18 68 97)"/><line x1="68" y1="54" x2="68" y2="142" stroke="#1b5e20" stroke-width="3" transform="rotate(-18 68 97)"/><line x1="68" y1="72" x2="46" y2="76" stroke="#1b5e20" stroke-width="2" transform="rotate(-18 68 97)"/><line x1="68" y1="88" x2="44" y2="92" stroke="#1b5e20" stroke-width="2" transform="rotate(-18 68 97)"/><line x1="68" y1="104" x2="44" y2="108" stroke="#1b5e20" stroke-width="2" transform="rotate(-18 68 97)"/><line x1="68" y1="72" x2="90" y2="76" stroke="#1b5e20" stroke-width="2" transform="rotate(-18 68 97)"/><line x1="68" y1="88" x2="90" y2="92" stroke="#1b5e20" stroke-width="2" transform="rotate(-18 68 97)"/><ellipse cx="142" cy="95" rx="36" ry="56" fill="#2e7d32" transform="rotate(16 142 95)"/><ellipse cx="145" cy="93" rx="26" ry="44" fill="#66bb6a" transform="rotate(16 142 95)"/><circle cx="58" cy="80" r="5" fill="#b2dfdb" opacity=".8"/><circle cx="63" cy="105" r="4" fill="#b2dfdb" opacity=".8"/></svg>',
+4:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><rect width="200" height="200" fill="#fce4ec"/><rect x="88" y="160" width="24" height="32" rx="5" fill="#795548"/><line x1="100" y1="160" x2="32" y2="88" stroke="#880e4f" stroke-width="4" stroke-linecap="round"/><line x1="100" y1="155" x2="168" y2="82" stroke="#880e4f" stroke-width="4" stroke-linecap="round"/><line x1="100" y1="148" x2="24" y2="62" stroke="#ad1457" stroke-width="3.5" stroke-linecap="round"/><line x1="100" y1="142" x2="176" y2="56" stroke="#ad1457" stroke-width="3.5" stroke-linecap="round"/><line x1="100" y1="135" x2="55" y2="38" stroke="#c2185b" stroke-width="3" stroke-linecap="round"/><line x1="100" y1="128" x2="148" y2="42" stroke="#c2185b" stroke-width="3" stroke-linecap="round"/><line x1="100" y1="122" x2="100" y2="28" stroke="#880e4f" stroke-width="3" stroke-linecap="round"/><ellipse cx="32" cy="85" rx="24" ry="7" fill="#e91e63" transform="rotate(-38 32 85)"/><ellipse cx="168" cy="80" rx="24" ry="7" fill="#e91e63" transform="rotate(38 168 80)"/><ellipse cx="24" cy="60" rx="20" ry="6" fill="#c2185b" transform="rotate(-30 24 60)"/><ellipse cx="176" cy="54" rx="20" ry="6" fill="#c2185b" transform="rotate(30 176 54)"/><ellipse cx="100" cy="26" rx="15" ry="5" fill="#f48fb1"/></svg>',
+5:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><rect width="200" height="200" fill="#e8f5e9"/><rect x="82" y="152" width="36" height="38" rx="6" fill="#795548"/><rect x="93" y="65" width="14" height="86" rx="7" fill="#4e342e"/><ellipse cx="100" cy="58" rx="40" ry="14" fill="#2e7d32"/><ellipse cx="63" cy="76" rx="36" ry="13" fill="#388e3c" transform="rotate(-14 63 76)"/><ellipse cx="137" cy="73" rx="36" ry="13" fill="#388e3c" transform="rotate(14 137 73)"/><ellipse cx="52" cy="98" rx="32" ry="11" fill="#43a047" transform="rotate(-20 52 98)"/><ellipse cx="148" cy="95" rx="32" ry="11" fill="#43a047" transform="rotate(20 148 95)"/><ellipse cx="100" cy="25" rx="22" ry="8" fill="#81c784"/></svg>',
+6:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><rect width="200" height="200" fill="#fff8e1"/><rect x="45" y="155" width="110" height="36" rx="9" fill="#bf8654"/><rect x="50" y="148" width="100" height="12" rx="5" fill="#a0693a"/><g transform="translate(72,138)"><ellipse cx="0" cy="0" rx="10" ry="22" fill="#558b2f"/><ellipse cx="-16" cy="-8" rx="9" ry="20" fill="#689f38" transform="rotate(-35)"/><ellipse cx="16" cy="-8" rx="9" ry="20" fill="#689f38" transform="rotate(35)"/><ellipse cx="-24" cy="4" rx="8" ry="17" fill="#7cb342" transform="rotate(-55)"/><ellipse cx="24" cy="2" rx="8" ry="17" fill="#7cb342" transform="rotate(55)"/></g><g transform="translate(138,132)"><ellipse cx="0" cy="0" rx="9" ry="19" fill="#e64a19"/><ellipse cx="-14" cy="-7" rx="8" ry="17" fill="#ef6c00" transform="rotate(-38)"/><ellipse cx="14" cy="-7" rx="8" ry="17" fill="#ef6c00" transform="rotate(38)"/><ellipse cx="-21" cy="3" rx="7" ry="15" fill="#ffa726" transform="rotate(-58)"/><ellipse cx="21" cy="1" rx="7" ry="15" fill="#ffa726" transform="rotate(58)"/></g></svg>',
+7:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><rect width="200" height="200" fill="#fff9c4"/><rect x="60" y="162" width="80" height="30" rx="8" fill="#bf8654"/><rect x="65" y="155" width="70" height="12" rx="5" fill="#a0693a"/><rect x="83" y="58" width="34" height="100" rx="17" fill="#558b2f"/><rect x="48" y="88" width="28" height="66" rx="14" fill="#689f38"/><rect x="124" y="92" width="28" height="62" rx="14" fill="#689f38"/><rect x="48" y="88" width="28" height="14" rx="7" fill="#33691e"/><rect x="76" y="88" width="7" height="14" rx="3" fill="#33691e"/><rect x="124" y="92" width="28" height="14" rx="7" fill="#33691e"/><rect x="117" y="92" width="7" height="14" rx="3" fill="#33691e"/><circle cx="100" cy="53" r="8" fill="#ffee58"/><circle cx="52" cy="84" r="6" fill="#f48fb1"/><circle cx="148" cy="88" r="6" fill="#f48fb1"/></svg>'
+};
+
+var DEF = [
+  {id:1,name:'Areca',sci:'Dypsis lutescens',days:7,sd:[7,5,10,14],water:'Primavera/verano: cada 5-7 dias. Invierno: cada 14 dias.',light:'Luz indirecta brillante. Sin sol directo.',temp:'18-27 C. No tolera heladas.',notes:'Pulveriza las hojas para aumentar humedad. Usa agua sin cal. Abona cada 15 dias en primavera-verano.',lw:null,photo:null,history:[]},
+  {id:2,name:'Chamaedorea elegans',sci:'Palmera de salon',days:7,sd:[7,7,10,14],water:'Verano: 1 vez/semana. Invierno: cada 2 semanas.',light:'Sombra o luz indirecta. Tolera poca luz.',temp:'16-24 C. Proteger de menos de 10 C.',notes:'De las pocas palmeras que prosperan con poca luz. Evita macetas muy grandes.',lw:null,photo:null,history:[]},
+  {id:3,name:'Calathea leopardina',sci:'Calathea',days:5,sd:[5,4,8,10],water:'Verano: cada 4-5 dias. Invierno: cada 10 dias. Agua tibia sin cloro.',light:'Luz indirecta o semioscuridad. Sin sol directo.',temp:'18-25 C. Alta humedad (60-80%).',notes:'Sus hojas se enrollan si hay poca humedad: pulveriza a diario.',lw:null,photo:null,history:[]},
+  {id:4,name:'Cordyline',sci:'Cordyline spp.',days:6,sd:[6,5,9,14],water:'Primavera/verano: cada 5-6 dias. Invierno: cada 14 dias.',light:'Luz brillante indirecta. Variedades de colores necesitan mas luz.',temp:'16-26 C. No tolera heladas.',notes:'Abona mensualmente en primavera-verano. Elimina hojas secas de la base.',lw:null,photo:null,history:[]},
+  {id:5,name:'Dracaena fragrans',sci:'Dracaena fragrans',days:12,sd:[12,10,16,21],water:'Verano: cada 10 dias. Invierno: cada 3 semanas. Dejar secar bien.',light:'Luz indirecta moderada. Se adapta a poca luz.',temp:'15-25 C. Evitar menos de 10 C.',notes:'Puntas marrones con agua fluorada: usa agua reposada. Toxica para gatos y perros.',lw:null,photo:null,history:[]},
+  {id:6,name:'Mix de Suculentas',sci:'Varios generos',days:14,sd:[14,12,21,30],water:'Verano: cada 12 dias. Invierno: cada mes. Dejar secar completamente.',light:'Pleno sol o luz muy brillante. Ventana sur o suroeste.',temp:'10-35 C. Toleran calor intenso.',notes:'El exceso de riego es su mayor enemigo. Usa sustrato para cactus con buen drenaje.',lw:null,photo:null,history:[]},
+  {id:7,name:'Mix de Cactus',sci:'Varios generos',days:21,sd:[21,18,30,45],water:'Verano: cada 18 dias. Invierno: cada 45 dias. Casi nulo en dormancia.',light:'Maxima luz solar. Alfeizar soleado o exterior.',temp:'5-40 C. Toleran grandes extremos.',notes:'En invierno entra en dormancia: no riegues ni abones. En primavera, vuelve gradualmente.',lw:null,photo:null,history:[]}
+];
+
+// ── SEASON ────────────────────────────────────────────
+// 0=spring,1=summer,2=autumn,3=winter
+// Multipliers: how many times MORE often to water vs base
+// base days / mult = actual days
+// summer: water 2x more often (days/2), winter: 2x less often (days*2)
+var SEASON_NAMES = ['Primavera','Verano','Otono','Invierno'];
+var SEASON_EMOJIS = ['Primavera','Verano','Otono','Invierno'];
+var SEASON_CLASSES = ['sp','su','au','wi'];
+var SEASON_DESC = ['Riegos botanicos de primavera','Riegos botanicos de verano','Riegos botanicos de otono','Riegos botanicos de invierno'];
+
+function getAutoSeason(){
+  var m = new Date().getMonth(); // 0-11
+  // Northern hemisphere: spring=2-4, summer=5-7, autumn=8-10, winter=11,0,1
+  if(m>=2&&m<=4) return 0;
+  if(m>=5&&m<=7) return 1;
+  if(m>=8&&m<=10) return 2;
+  return 3;
+}
+
+var curSeason = getAutoSeason();
+
+function getEffectiveDays(p){
+  // Use per-season days if available, else fall back to base days
+  if(p.sd && p.sd[curSeason]) return p.sd[curSeason];
+  return p.days;
+}
+
+function setSeason(s){
+  curSeason = s;
+  updateSeasonUI();
+  render();
+  toast('Estacion: ' + SEASON_NAMES[s]);
+}
+
+function updateSeasonUI(){
+  var cls = SEASON_CLASSES;
+  for(var i=0;i<4;i++){
+    var btn = document.getElementById('sBtn'+i);
+    btn.className = 's-btn' + (i===curSeason?' '+cls[i]:'');
+  }
+  document.getElementById('seasonMult').textContent = SEASON_DESC[curSeason];
+}
+
+// ── DATA ──────────────────────────────────────────────
+function load(){try{var d=localStorage.getItem(SK);return d?JSON.parse(d):null;}catch(e){return null;}}
+function save(p){try{localStorage.setItem(SK,JSON.stringify(p));}catch(e){}}
+
+var plants = (function(){
+  var saved = load();
+  if(!saved) return JSON.parse(JSON.stringify(DEF));
+  saved.forEach(function(p){
+    if(!p.history)p.history=[];
+    // Migrate: add sd from DEF if missing
+    if(!p.sd){
+      var def=DEF.find(function(d){return d.id===p.id;});
+      p.sd=def?def.sd:[p.days,p.days,p.days,p.days];
+    }
+  });
+  return saved;
+})();
+
+// ── HELPERS ───────────────────────────────────────────
+function daysLeft(p){
+  if(!p.lw)return 0;
+  var eff = getEffectiveDays(p);
+  var next=new Date(new Date(p.lw).getTime()+eff*86400000);
+  return Math.ceil((next-Date.now())/86400000);
+}
+function status(p){var d=daysLeft(p);return d<=0?'urgent':d<=2?'soon':'ok';}
+function stText(p){
+  if(!p.lw)return'Sin regar aun (c/'+getEffectiveDays(p)+' dias en '+SEASON_NAMES[curSeason]+')';
+  var d=daysLeft(p);
+  if(d<=0)return'Necesita agua!';
+  if(d===1)return'Regar manana';
+  return'En '+d+' dias';
+}
+function stColor(s){return s==='urgent'?'#e24b4a':s==='soon'?'#ba7517':'#2d8653';}
+
+function fmtDate(iso){
+  var d=new Date(iso);
+  return d.getDate()+'/'+(d.getMonth()+1)+'/'+d.getFullYear()+' '+pad(d.getHours())+':'+pad(d.getMinutes());
+}
+function pad(n){return n<10?'0'+n:n;}
+function daysAgo(iso){
+  var diff=Math.floor((Date.now()-new Date(iso))/86400000);
+  if(diff===0)return'Hoy';
+  if(diff===1)return'Ayer';
+  return'Hace '+diff+' dias';
+}
+
+function getVisual(p, w, h){
+  w=w||66; h=h||66;
+  if(p.photo) return '<img src="'+p.photo+'" style="width:'+w+'px;height:'+h+'px;border-radius:13px;object-fit:cover;flex-shrink:0">';
+  if(SVGS[p.id]) return '<div style="width:'+w+'px;height:'+h+'px;border-radius:13px;overflow:hidden;flex-shrink:0">'+SVGS[p.id]+'</div>';
+  return '<div style="width:'+w+'px;height:'+h+'px;border-radius:13px;background:#d8f3dc;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:bold;color:#1a5c38;text-align:center;padding:5px;flex-shrink:0">'+p.name.substring(0,10)+'</div>';
+}
+
+// ── TABS ──────────────────────────────────────────────
+var curTab = 'plants';
+function switchTab(t){
+  curTab = t;
+  ['plants','history','stats'].forEach(function(x){
+    document.getElementById(x+'Page').style.display = t===x?(x==='plants'?'block':'block'):'none';
+    var cls = document.getElementById('tab'+x.charAt(0).toUpperCase()+x.slice(1)).classList;
+    t===x ? cls.add('active') : cls.remove('active');
+  });
+  document.getElementById('fabBtn').style.display = t==='plants'?'flex':'none';
+  if(t==='history') renderHistory();
+  if(t==='stats') renderStats();
+}
+// init visibility
+document.getElementById('historyPage').style.display='none';
+document.getElementById('statsPage').style.display='none';
+
+// ── RENDER PLANTS ─────────────────────────────────────
+function render(){
+  var q=(document.getElementById('srch').value||'').toLowerCase();
+  var fil=plants.filter(function(p){return p.name.toLowerCase().indexOf(q)>=0||p.sci.toLowerCase().indexOf(q)>=0;});
+  var srt=fil.slice().sort(function(a,b){return daysLeft(a)-daysLeft(b);});
+  var u=0,s=0,o=0;
+  plants.forEach(function(p){var st=status(p);if(st==='urgent')u++;else if(st==='soon')s++;else o++;});
+  document.getElementById('sU').textContent=u;
+  document.getElementById('sS').textContent=s;
+  document.getElementById('sO').textContent=o;
+  var b=document.getElementById('urgBadge');
+  b.style.display=u>0?'inline':'none'; b.textContent=u;
+  var el=document.getElementById('list');
+  if(!srt.length){el.innerHTML='<div class="empty">No se encontraron plantas</div>';return;}
+  var h='',ls='';
+  srt.forEach(function(p){
+    var st=status(p);
+    var sec=st==='urgent'?'Necesitan agua ahora':st==='soon'?'Pronto necesitaran agua':'Al dia';
+    if(sec!==ls){h+='<div class="sec-label">'+sec+'</div>';ls=sec;}
+    h+='<div class="card '+st+'"><div class="card-body">'
+      +getVisual(p)
+      +'<div class="plant-info">'
+      +'<div class="plant-name">'+p.name+'</div>'
+      +'<div class="plant-sci">'+p.sci+'</div>'
+      +'<div class="plant-st"><div class="dot" style="background:'+stColor(st)+'"></div>'
+      +'<div class="st-txt">'+stText(p)+'</div></div></div>'
+      +'<div class="btns">'
+      +'<button class="btn-w" onclick="water('+p.id+')">Regada</button>'
+      +'<button class="btn-i" onclick="openInfo('+p.id+')">Info</button>'
+      +'</div></div></div>';
+  });
+  el.innerHTML=h;
+}
+
+// ── WATER ─────────────────────────────────────────────
+function water(id){
+  var p=plants.find(function(x){return x.id===id;});if(!p)return;
+  var now=new Date().toISOString();
+  p.lw=now;
+  if(!p.history)p.history=[];
+  p.history.unshift(now);
+  if(p.history.length>50)p.history=p.history.slice(0,50);
+  save(plants);render();
+  toast(p.name+' regada hoy');
+  notifSched(p);
+}
+
+// ── INFO SHEET ────────────────────────────────────────
+function openInfo(id){
+  var p=plants.find(function(x){return x.id===id;});if(!p)return;
+  var d=daysLeft(p);
+  var eff=getEffectiveDays(p);var wt=p.lw?(d<=0?'Necesita agua hoy!':'Proximo riego en '+d+' dia'+(d===1?'':'s')+' ('+SEASON_NAMES[curSeason]+')'):'Sin regar aun (cada '+eff+' dias en '+SEASON_NAMES[curSeason]+')';
+  var sc=p.lw&&d<=0?'#e24b4a':p.lw&&d<=2?'#ba7517':'#2d8653';
+  var lastWaterStr=p.lw?'Ultimo riego: '+fmtDate(p.lw):'Sin registros de riego';
+  var totalReg=(p.history&&p.history.length)||0;
+
+  document.getElementById('infoSheet').innerHTML=
+    '<div class="handle"></div>'
+    // Photo
+    +(p.photo
+      ?'<img src="'+p.photo+'" style="width:100%;height:170px;object-fit:cover;border-radius:14px;margin-bottom:14px;display:block">'
+      :SVGS[p.id]?'<div style="width:100%;height:170px;border-radius:14px;overflow:hidden;margin-bottom:14px">'+SVGS[p.id]+'</div>'
+      :'<div style="width:100%;height:80px;background:#d8f3dc;border-radius:14px;display:flex;align-items:center;justify-content:center;font-weight:bold;color:#1a5c38;margin-bottom:14px">'+p.name+'</div>')
+    // Header row with Edit button
+    +'<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">'
+    +'<div><div class="sh-title">'+p.name+'</div>'
+    +'<div style="font-size:13px;color:#777;font-style:italic">'+p.sci+'</div></div>'
+    +'<button class="btn-edit" onclick="openEdit('+id+')">Editar</button>'
+    +'</div>'
+    // Status + last watered
+    +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">'
+    +'<div style="font-size:12px;font-weight:bold;color:'+sc+'">'+wt+'</div>'
+    +'<div style="font-size:11px;color:#aaa">'+totalReg+' riegos totales</div>'
+    +'</div>'
+    +'<div style="font-size:11px;color:#aaa;margin-bottom:10px">'+lastWaterStr+'</div>'
+    +'<div style="height:1px;background:#c8e6c9;margin-bottom:12px"></div>'
+    // Info box
+    +'<div class="info-box">'
+    +'<div class="info-row"><div class="info-lbl">Riego</div><div class="info-val">'+p.water+'</div></div>'
+    +(p.sd?'<div class="info-row"><div class="info-lbl">Por estacion</div><div class="info-val" style="display:grid;grid-template-columns:1fr 1fr;gap:4px 10px"><span>Primavera: <b>'+p.sd[0]+'d</b></span><span>Verano: <b>'+p.sd[1]+'d</b></span><span>Otono: <b>'+p.sd[2]+'d</b></span><span>Invierno: <b>'+p.sd[3]+'d</b></span></div></div>':'')
+    +'<div class="info-row"><div class="info-lbl">Luz</div><div class="info-val">'+p.light+'</div></div>'
+    +'<div class="info-row"><div class="info-lbl">Temp.</div><div class="info-val">'+p.temp+'</div></div>'
+    +(p.notes?'<div class="info-row"><div class="info-lbl">Tips</div><div class="info-val">'+p.notes+'</div></div>':'')
+    +'</div>'
+    +'<div class="sh-actions">'
+    +'<button class="btn-no" onclick="closeOv(\'infoOv\')">Cerrar</button>'
+    +'<button class="btn-ok" onclick="closeOv(\'infoOv\');water('+p.id+')">Marcar regada</button>'
+    +'</div>';
+  document.getElementById('infoOv').classList.add('open');
+}
+
+// ── EDIT ──────────────────────────────────────────────
+var editingId = null;
+var editPhoto = null;
+
+function openEdit(id){
+  var p=plants.find(function(x){return x.id===id;});if(!p)return;
+  editingId=id; editPhoto=null;
+  closeOv('infoOv');
+  document.getElementById('editSub').textContent=p.name;
+  document.getElementById('eNm').value=p.name;
+  document.getElementById('eSc').value=p.sci||'';
+  var sd=p.sd||[p.days,p.days,p.days,p.days];
+  document.getElementById('eSp').value=sd[0];
+  document.getElementById('eSu').value=sd[1];
+  document.getElementById('eAu').value=sd[2];
+  document.getElementById('eWi').value=sd[3];
+  document.getElementById('eWt').value=p.water||'';
+  document.getElementById('eLt').value=p.light||'';
+  document.getElementById('eTp').value=p.temp||'';
+  document.getElementById('eNt').value=p.notes||'';
+  var prev=document.getElementById('ePrev');
+  if(p.photo){prev.src=p.photo;prev.style.display='block';}
+  else{prev.src='';prev.style.display='none';}
+  document.getElementById('editOv').classList.add('open');
+}
+
+function saveEdit(){
+  var name=document.getElementById('eNm').value.trim();
+  if(!name){toast('El nombre no puede estar vacio');return;}
+  var p=plants.find(function(x){return x.id===editingId;});if(!p)return;
+  p.name=name;
+  p.sci=document.getElementById('eSc').value.trim();
+  var sp=parseInt(document.getElementById('eSp').value)||p.days;
+  var su=parseInt(document.getElementById('eSu').value)||p.days;
+  var au=parseInt(document.getElementById('eAu').value)||p.days;
+  var wi=parseInt(document.getElementById('eWi').value)||p.days;
+  p.days=sp;
+  p.sd=[sp,su,au,wi];
+  p.water=document.getElementById('eWt').value.trim()||p.water;
+  p.light=document.getElementById('eLt').value.trim()||p.light;
+  p.temp=document.getElementById('eTp').value.trim()||p.temp;
+  p.notes=document.getElementById('eNt').value.trim();
+  if(editPhoto) p.photo=editPhoto;
+  save(plants); closeOv('editOv'); render();
+  toast(name+' actualizada');
+}
+
+function deletePlant(){
+  var p=plants.find(function(x){return x.id===editingId;});if(!p)return;
+  if(!confirm('Eliminar '+p.name+'? No se puede deshacer.'))return;
+  plants=plants.filter(function(x){return x.id!==editingId;});
+  save(plants); closeOv('editOv'); render();
+  toast('Planta eliminada');
+}
+
+// ── ADD ───────────────────────────────────────────────
+var newPhoto = null;
+function openAdd(){
+  ['nNm','nSc','nWt','nLt','nTp','nNt'].forEach(function(i){document.getElementById(i).value='';});
+  document.getElementById('nSp').value='7';document.getElementById('nSu').value='5';document.getElementById('nAu').value='10';document.getElementById('nWi').value='14';
+  var prev=document.getElementById('fPrev');
+  prev.src='';prev.style.display='none';
+  newPhoto=null;
+  document.getElementById('addOv').classList.add('open');
+}
+
+function addPlant(){
+  var name=document.getElementById('nNm').value.trim();
+  if(!name){toast('Escribe el nombre');return;}
+  var days=parseInt(document.getElementById('nDy').value)||7;
+  var sp=parseInt(document.getElementById('nSp').value)||7;
+  var su=parseInt(document.getElementById('nSu').value)||5;
+  var au=parseInt(document.getElementById('nAu').value)||10;
+  var wi=parseInt(document.getElementById('nWi').value)||14;
+  var days=sp; // base = spring
+  plants.push({
+    id:Date.now(),name:name,sci:document.getElementById('nSc').value.trim()||'',
+    days:days,sd:[sp,su,au,wi],water:document.getElementById('nWt').value.trim()||'Primavera: '+sp+' dias / Verano: '+su+' dias / Invierno: '+wi+' dias',
+    light:document.getElementById('nLt').value.trim()||'Luz indirecta',
+    temp:document.getElementById('nTp').value.trim()||'18-25 C',
+    notes:document.getElementById('nNt').value.trim()||'',
+    lw:null,photo:newPhoto||null,history:[]
+  });
+  save(plants); closeOv('addOv'); render();
+  toast(name+' añadida'); newPhoto=null;
+}
+
+// ── PHOTO UPLOAD ──────────────────────────────────────
+function prevPhoto(e, previewId, cb){
+  var f=e.target.files[0];if(!f)return;
+  var r=new FileReader();
+  r.onload=function(ev){
+    var data=ev.target.result;
+    cb(data);
+    var img=document.getElementById(previewId);
+    img.src=data;img.style.display='block';
+  };
+  r.readAsDataURL(f);
+}
+
+// ── HISTORY ───────────────────────────────────────────
+function renderHistory(){
+  // Collect all watering events across all plants
+  var events=[];
+  plants.forEach(function(p){
+    (p.history||[]).forEach(function(iso){
+      events.push({name:p.name,iso:iso,p:p});
+    });
+    // If has lw but no history (old data), add it
+    if(p.lw && (!p.history||p.history.length===0)){
+      events.push({name:p.name,iso:p.lw,p:p});
+    }
+  });
+  events.sort(function(a,b){return new Date(b.iso)-new Date(a.iso);});
+
+  var el=document.getElementById('historyList');
+  if(!events.length){el.innerHTML='<div class="empty">Aun no hay riegos registrados.<br>Pulsa "Regada" en alguna planta para empezar.</div>';return;}
+
+  var h='';
+  events.slice(0,60).forEach(function(ev){
+    h+='<div class="history-item">'
+      +getVisual(ev.p,36,36)
+      +'<div style="flex:1;min-width:0">'
+      +'<div class="history-name">'+ev.name+'</div>'
+      +'<div class="history-date">'+fmtDate(ev.iso)+'</div>'
+      +'</div>'
+      +'<div class="history-ago">'+daysAgo(ev.iso)+'</div>'
+      +'</div>';
+  });
+  el.innerHTML=h;
+}
+
+// ── STATS ─────────────────────────────────────────────
+function renderStats(){
+  // Total waterings
+  var totalWater=0;
+  var maxW=0, maxP=null, minW=999, minP=null;
+  var withHistory=[];
+
+  plants.forEach(function(p){
+    var cnt=(p.history&&p.history.length)||0;
+    if(p.lw&&cnt===0)cnt=1;
+    totalWater+=cnt;
+    if(cnt>maxW){maxW=cnt;maxP=p;}
+    if(cnt<minW){minW=cnt;minP=p;}
+    withHistory.push({p:p,cnt:cnt});
+  });
+
+  // Avg days between watering
+  var totalDays=0,dcount=0;
+  plants.forEach(function(p){totalDays+=p.days;dcount++;});
+  var avgDays=dcount?Math.round(totalDays/dcount):0;
+
+  // Plants needing water now
+  var urgentNow=plants.filter(function(p){return status(p)==='urgent';}).length;
+
+  // Grid
+  document.getElementById('statsGrid').innerHTML=
+    mkStatMini('Total riegos',totalWater,'')
+    +mkStatMini('Plantas',''+plants.length,'en coleccion')
+    +mkStatMini('Riego promedio',avgDays,'dias entre riegos')
+    +mkStatMini('Necesitan agua',urgentNow,'ahora mismo');
+
+  // Bar chart
+  var sorted=withHistory.slice().sort(function(a,b){return b.cnt-a.cnt;});
+  var maxCnt=sorted.length?sorted[0].cnt:1;
+  var barH='';
+  sorted.forEach(function(item){
+    var pct=maxCnt>0?Math.round(item.cnt/maxCnt*100):0;
+    barH+='<div class="bar-row">'
+      +'<div class="bar-label">'+item.p.name+'</div>'
+      +'<div class="bar-track"><div class="bar-fill" style="width:'+pct+'%"></div></div>'
+      +'<div class="bar-val">'+item.cnt+'</div>'
+      +'</div>';
+  });
+  document.getElementById('statsBar').innerHTML=barH||'<div class="empty" style="padding:20px">Sin datos aun</div>';
+
+  // Most watered
+  document.getElementById('statsMost').innerHTML=maxP
+    ?('<div style="display:flex;align-items:center;gap:12px">'+getVisual(maxP,48,48)
+      +'<div><div style="font-size:17px;font-weight:bold;color:#111">'+maxP.name+'</div>'
+      +'<div style="font-size:13px;color:#555;margin-top:2px">'+maxW+' riegos registrados</div></div></div>')
+    :'<div class="empty" style="padding:10px">Sin datos</div>';
+
+  // Least watered (only from plants with data)
+  var withData=withHistory.filter(function(x){return x.cnt>0;});
+  var leastItem=withData.length?withData.reduce(function(a,b){return a.cnt<b.cnt?a:b;}):null;
+  document.getElementById('statsLeast').innerHTML=leastItem
+    ?('<div style="display:flex;align-items:center;gap:12px">'+getVisual(leastItem.p,48,48)
+      +'<div><div style="font-size:17px;font-weight:bold;color:#111">'+leastItem.p.name+'</div>'
+      +'<div style="font-size:13px;color:#555;margin-top:2px">Solo '+leastItem.cnt+' riego'+(leastItem.cnt===1?'':'s')+' registrado'+(leastItem.cnt===1?'':'s')+'</div></div></div>')
+    :'<div class="empty" style="padding:10px">Registra riegos para ver estadisticas</div>';
+}
+
+function mkStatMini(label,val,sub){
+  return '<div style="background:#f0faf4;border-radius:12px;padding:12px;text-align:center">'
+    +'<div style="font-size:22px;font-weight:bold;color:#1a5c38">'+val+'</div>'
+    +'<div style="font-size:11px;color:#888;margin-top:3px">'+label+'</div>'
+    +(sub?'<div style="font-size:10px;color:#aaa">'+sub+'</div>':'')
+    +'</div>';
+}
+
+// ── OVERLAYS ──────────────────────────────────────────
+function closeOv(id){document.getElementById(id).classList.remove('open');}
+function bgClose(e,id){if(e.target.id===id)closeOv(id);}
+
+// ── TOAST ─────────────────────────────────────────────
+var tTimer;
+function toast(msg){
+  var t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  clearTimeout(tTimer);tTimer=setTimeout(function(){t.classList.remove('show');},2500);
+}
+
+// ── NOTIFICATIONS & REMINDERS ────────────────────────
+var inappQueue=[];
+var inappShowing=false;
+var reminderTimers=[];
+var notifGranted=false;
+
+// Register service worker
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('sw.js').then(function(reg){
+    console.log('SW registered');
+  }).catch(function(e){console.log('SW error',e);});
+}
+
+function toggleReminders(){
+  if(Notification.permission==='granted'){
+    notifGranted=true;
+    activateReminders();
+  } else if(Notification.permission==='denied'){
+    toast('Notificaciones bloqueadas. Activalas en ajustes del navegador.');
+  } else {
+    Notification.requestPermission().then(function(perm){
+      if(perm==='granted'){
+        notifGranted=true;
+        activateReminders();
+        toast('Notificaciones activadas');
+      } else {
+        toast('Permiso denegado');
+      }
+    });
+  }
+}
+
+function activateReminders(){
+  var btn=document.getElementById('remBtn');
+  btn.style.background='rgba(255,255,255,.45)';
+  btn.style.color='#1a5c38';
+  btn.textContent='ON';
+  checkUrgentNow();
+  scheduleAll();
+  // Store schedule in SW
+  syncScheduleToSW();
+}
+
+function syncScheduleToSW(){
+  if(!('serviceWorker' in navigator))return;
+  navigator.serviceWorker.ready.then(function(reg){
+    var schedule=plants.map(function(p){
+      var ms=Math.max(0,daysLeft(p))*86400000;
+      return {name:p.name, delayMs:ms, id:p.id};
+    });
+    reg.active && reg.active.postMessage({type:'SCHEDULE', schedule:schedule});
+  });
+}
+
+function checkUrgentNow(){
+  var urgent=plants.filter(function(p){return status(p)==='urgent';});
+  var banner=document.getElementById('alertBanner');
+  if(urgent.length>0){
+    document.getElementById('alertText').textContent='Necesitan agua hoy: '+urgent.map(function(p){return p.name;}).join(', ');
+    banner.classList.add('show');
+    // Push notification for urgent plants
+    if(notifGranted){
+      urgent.forEach(function(p){
+        sendPushNotif(p.name+' necesita agua hoy', 'Lleva '+getEffectiveDays(p)+' dias sin regar. Tocala para marcarla.');
+      });
+    }
+    urgent.forEach(function(p){inappQueue.push(p);});
+    showNextInapp();
+  }
+}
+
+function sendPushNotif(title, body){
+  if(!notifGranted)return;
+  navigator.serviceWorker.ready.then(function(reg){
+    reg.showNotification(title,{
+      body: body,
+      icon: 'icon-192.png',
+      badge: 'icon-192.png',
+      tag: title,
+      renotify: false,
+      actions:[{action:'open', title:'Ver planta'}]
+    });
+  }).catch(function(){
+    // Fallback: basic Notification API
+    try{ new Notification(title,{body:body}); }catch(e){}
+  });
+}
+
+function scheduleAll(){
+  reminderTimers.forEach(function(t){clearTimeout(t);});
+  reminderTimers=[];
+  plants.forEach(function(p){
+    var ms=Math.max(0,daysLeft(p))*86400000;
+    if(ms>0){
+      var t=setTimeout(function(){
+        inappQueue.push(p);
+        showNextInapp();
+        document.getElementById('alertText').textContent='Necesita agua: '+p.name;
+        document.getElementById('alertBanner').classList.add('show');
+        sendPushNotif(p.name+' necesita agua', 'Han pasado '+getEffectiveDays(p)+' dias desde el ultimo riego.');
+      },ms);
+      reminderTimers.push(t);
+    }
+  });
+}
+
+function notifSched(p){
+  reminderTimers.forEach(function(t){clearTimeout(t);});
+  reminderTimers=[];
+  scheduleAll();
+  if(notifGranted)syncScheduleToSW();
+}
+
+function showNextInapp(){
+  if(inappShowing||inappQueue.length===0)return;
+  var p=inappQueue.shift();
+  inappShowing=true;
+  document.getElementById('inappTitle').textContent=p.name+' necesita agua';
+  document.getElementById('inappSub').textContent='Lleva sin regar mas de '+getEffectiveDays(p)+' dias';
+  document.getElementById('inappCard').classList.add('show');
+  setTimeout(function(){closeInapp();},5000);
+}
+function closeInapp(){
+  document.getElementById('inappCard').classList.remove('show');
+  setTimeout(function(){inappShowing=false;if(inappQueue.length>0)showNextInapp();},400);
+}
+
+// Check permission state on load
+if(Notification.permission==='granted'){
+  notifGranted=true;
+  var btn=document.getElementById('remBtn');
+  btn.style.background='rgba(255,255,255,.45)';
+  btn.style.color='#1a5c38';
+  btn.textContent='ON';
+}
+
+// ── INIT ──────────────────────────────────────────────
+updateSeasonUI();
+render();
+setTimeout(function(){
+  var urgent=plants.filter(function(p){return status(p)==='urgent';});
+  if(urgent.length>0){
+    document.getElementById('alertText').textContent='Tienen sed: '+urgent.map(function(p){return p.name;}).join(', ');
+    document.getElementById('alertBanner').classList.add('show');
+  }
+},800);
+</script>
+</body>
+</html>
