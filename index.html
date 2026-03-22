@@ -121,6 +121,67 @@ textarea.sh-input{resize:vertical;min-height:80px}
 .s-btn.au{background:#ffe5cc;border-color:#e07b20;color:#7a3c00}
 .s-btn.wi{background:#d6eaf8;border-color:#5dade2;color:#1a4e6e}
 .season-info{font-size:11px;color:#aaa;text-align:center}
+
+/* CALENDAR */
+.cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.cal-nav-btn{background:none;border:1px solid #ddd;border-radius:8px;padding:5px 12px;font-size:16px;cursor:pointer;color:#1a5c38;font-weight:bold}
+.cal-month{font-size:16px;font-weight:bold;color:#111}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:14px}
+.cal-dow{text-align:center;font-size:10px;font-weight:bold;color:#aaa;padding:4px 0}
+.cal-day{min-height:36px;border-radius:8px;padding:3px 2px;background:#f8f8f8;position:relative;cursor:default}
+.cal-day.other-month{background:transparent}
+.cal-day.today{background:#e8f5e9;border:1.5px solid #52b788}
+.cal-day-num{font-size:11px;color:#444;text-align:center;font-weight:bold}
+.cal-day.other-month .cal-day-num{color:#ccc}
+.cal-dots{display:flex;flex-wrap:wrap;justify-content:center;gap:2px;margin-top:2px}
+.cal-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.cal-legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.cal-legend-item{display:flex;align-items:center;gap:4px;font-size:11px;color:#555}
+.cal-legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+/* WEEK VIEW */
+.week-row{margin-bottom:10px}
+.week-day-header{font-size:12px;font-weight:bold;color:#888;text-transform:uppercase;letter-spacing:.5px;padding:4px 0;border-bottom:1px solid #eee;margin-bottom:6px;display:flex;justify-content:space-between}
+.week-day-header.today-hdr{color:#1a5c38}
+.week-plant-chip{display:inline-flex;align-items:center;gap:6px;background:#fff;border:1px solid #dde;border-radius:10px;padding:5px 10px;margin:0 4px 5px 0;font-size:12px;cursor:pointer}
+.week-plant-chip.urgent-chip{border-color:#e24b4a;background:#fff5f5}
+.week-plant-chip.soon-chip{border-color:#ef9f27;background:#fffbf0}
+.week-empty{font-size:12px;color:#ccc;padding:4px 0}
+/* DASHBOARD / WIDGET */
+.dash-page{padding:12px 16px}
+.dash-hero{background:#1a5c38;border-radius:16px;padding:16px;margin-bottom:12px;color:#fff}
+.dash-hero-title{font-size:13px;opacity:.8;margin-bottom:4px}
+.dash-hero-num{font-size:48px;font-weight:bold;line-height:1}
+.dash-hero-sub{font-size:13px;opacity:.85;margin-top:4px}
+.dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.dash-card{background:#fff;border:1px solid #dde;border-radius:14px;padding:14px 12px;text-align:center}
+.dash-card-num{font-size:28px;font-weight:bold;color:#1a5c38}
+.dash-card-lbl{font-size:11px;color:#888;margin-top:3px}
+.dash-next{background:#fff;border:1px solid #dde;border-radius:14px;padding:14px;margin-bottom:12px}
+.dash-next-title{font-size:12px;font-weight:bold;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
+.dash-next-item{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.dash-next-item:last-child{margin-bottom:0}
+.dash-next-name{font-size:14px;font-weight:bold;color:#111;flex:1}
+.dash-next-days{font-size:12px;font-weight:bold;padding:3px 8px;border-radius:8px;white-space:nowrap}
+.dash-next-days.urgent{background:#fff0f0;color:#e24b4a}
+.dash-next-days.soon{background:#fffbf0;color:#ba7517}
+.dash-next-days.ok{background:#f0faf4;color:#1a5c38}
+.dash-streak{background:#fff8e1;border:1px solid #ffc107;border-radius:14px;padding:14px;margin-bottom:12px}
+.dash-streak-title{font-size:12px;font-weight:bold;color:#7d5200;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+
+/* COLOR PICKER */
+.color-palette{display:flex;flex-wrap:wrap;gap:7px;margin-top:6px}
+.color-swatch{width:30px;height:30px;border-radius:50%;cursor:pointer;border:3px solid transparent;flex-shrink:0;transition:transform .1s}
+.color-swatch.selected{border-color:#111;transform:scale(1.18)}
+/* DAY DETAIL MODAL */
+.day-detail-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:400;align-items:center;justify-content:center;padding:20px}
+.day-detail-overlay.open{display:flex}
+.day-detail-box{background:#fff;border-radius:18px;width:100%;max-width:380px;padding:20px;max-height:80vh;overflow-y:auto}
+.day-detail-title{font-size:17px;font-weight:bold;color:#111;margin-bottom:14px;text-align:center}
+.day-detail-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #f0f0f0}
+.day-detail-item:last-child{border-bottom:none}
+.day-detail-name{font-size:14px;font-weight:bold;color:#111;flex:1}
+.day-detail-sci{font-size:11px;color:#888;font-style:italic}
+.day-detail-close{width:100%;background:#1a5c38;color:#fff;border:none;border-radius:12px;padding:12px;font-size:15px;font-weight:bold;cursor:pointer;margin-top:14px;font-family:Arial,sans-serif}
 </style>
 </head>
 <body>
@@ -137,10 +198,12 @@ textarea.sh-input{resize:vertical;min-height:80px}
 </div>
 
 <!-- TABS -->
-<div class="tabs">
-  <div class="tab active" id="tabPlants" onclick="switchTab('plants')">Plantas</div>
-  <div class="tab" id="tabHistory" onclick="switchTab('history')">Historial</div>
-  <div class="tab" id="tabStats" onclick="switchTab('stats')">Estadisticas</div>
+<div class="tabs" style="overflow-x:auto;white-space:nowrap;display:flex">
+  <div class="tab active" id="tabPlants" onclick="switchTab('plants')" style="flex:none;padding:11px 14px">Plantas</div>
+  <div class="tab" id="tabCalendar" onclick="switchTab('calendar')" style="flex:none;padding:11px 14px">Calendario</div>
+  <div class="tab" id="tabDash" onclick="switchTab('dash')" style="flex:none;padding:11px 14px">Resumen</div>
+  <div class="tab" id="tabHistory" onclick="switchTab('history')" style="flex:none;padding:11px 14px">Historial</div>
+  <div class="tab" id="tabStats" onclick="switchTab('stats')" style="flex:none;padding:11px 14px">Stats</div>
 </div>
 
 
@@ -179,6 +242,33 @@ textarea.sh-input{resize:vertical;min-height:80px}
 </div>
 
 <!-- HISTORY TAB -->
+<div id="calendarPage" class="stats-page">
+  <div style="padding:14px 16px">
+    <div class="stat-card" style="margin-bottom:12px">
+      <div class="cal-nav">
+        <button class="cal-nav-btn" onclick="calPrev()">&#8249;</button>
+        <div class="cal-month" id="calMonthTitle"></div>
+        <button class="cal-nav-btn" onclick="calNext()">&#8250;</button>
+      </div>
+      <div class="cal-grid" id="calGrid"></div>
+      <div class="cal-legend" id="calLegend"></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-title">Esta semana</div>
+      <div id="weekView"></div>
+    </div>
+  </div>
+</div>
+
+<div id="dashPage" class="stats-page">
+  <div class="dash-page">
+    <div class="dash-hero" id="dashHero"></div>
+    <div class="dash-grid" id="dashGrid"></div>
+    <div class="dash-next" id="dashNext"></div>
+    <div class="dash-streak" id="dashStreak"></div>
+  </div>
+</div>
+
 <div id="historyPage" class="stats-page">
   <div class="stat-card">
     <div class="stat-card-title">Ultimos riegos registrados</div>
@@ -225,6 +315,9 @@ textarea.sh-input{resize:vertical;min-height:80px}
       <input type="file" id="fUp" accept="image/*" style="display:none" onchange="prevPhoto(event,'fPrev',function(d){newPhoto=d})">
       <img id="fPrev" class="up-prev">
     </div>
+    <label class="sh-label">Color en el calendario</label>
+    <div class="color-palette" id="addColorPalette"></div>
+    <input type="hidden" id="nColor">
     <label class="sh-label">Dias entre riego por estacion</label>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px">
       <div><div style="font-size:11px;color:#888;margin-bottom:3px">Primavera</div><input class="sh-input" type="number" id="nSp" min="1" max="90" value="7" style="padding:8px"></div>
@@ -264,6 +357,9 @@ textarea.sh-input{resize:vertical;min-height:80px}
       <input type="file" id="eFUp" accept="image/*" style="display:none" onchange="prevPhoto(event,'ePrev',function(d){editPhoto=d})">
       <img id="ePrev" class="up-prev">
     </div>
+    <label class="sh-label">Color en el calendario</label>
+    <div class="color-palette" id="editColorPalette"></div>
+    <input type="hidden" id="eColor">
     <label class="sh-label">Nombre *</label>
     <input class="sh-input" type="text" id="eNm">
     <label class="sh-label">Nombre cientifico</label>
@@ -293,6 +389,30 @@ textarea.sh-input{resize:vertical;min-height:80px}
 
 <script>
 var SK = 'plants_v5';
+
+
+var PLANT_COLORS = [
+  '#52b788','#e24b4a','#ef9f27','#5dade2','#a569bd','#e67e22','#1abc9c',
+  '#2ecc71','#e74c3c','#f39c12','#3498db','#9b59b6','#1abc9c','#e67e22',
+  '#27ae60','#c0392b','#d35400','#2980b9','#8e44ad','#16a085','#f1c40f',
+  '#ff6b6b','#4ecdc4','#45b7d1','#96ceb4','#ffeaa7','#dfe6e9','#fd79a8',
+  '#6c5ce7','#00b894','#fdcb6e','#e17055','#74b9ff','#a29bfe','#55efc4'
+];
+
+var PALETTE_DISPLAY = [
+  '#e24b4a','#e67e22','#ef9f27','#f1c40f','#2ecc71','#52b788','#1abc9c',
+  '#16a085','#3498db','#5dade2','#74b9ff','#2980b9','#9b59b6','#a29bfe',
+  '#6c5ce7','#8e44ad','#fd79a8','#e91e63','#ff6b6b','#c0392b','#d35400',
+  '#f39c12','#27ae60','#00b894','#55efc4','#4ecdc4','#45b7d1','#96ceb4',
+  '#fdcb6e','#ffeaa7','#dfe6e9','#b2bec3','#636e72','#2d3436','#ffffff'
+];
+
+var calYear = new Date().getFullYear();
+var calMonth = new Date().getMonth();
+
+var MONTHS = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+
+var DAYS_SHORT = ['Lu','Ma','Mi','Ju','Vi','Sa','Do'];
 
 var SVGS = {
 1:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><rect width="200" height="200" fill="#c8e6c9"/><rect x="88" y="148" width="24" height="42" rx="5" fill="#795548"/><rect x="86" y="145" width="28" height="8" rx="3" fill="#6d4c41"/><line x1="100" y1="148" x2="28" y2="68" stroke="#2e7d32" stroke-width="5" stroke-linecap="round"/><line x1="100" y1="143" x2="172" y2="62" stroke="#2e7d32" stroke-width="5" stroke-linecap="round"/><line x1="100" y1="136" x2="45" y2="45" stroke="#388e3c" stroke-width="4" stroke-linecap="round"/><line x1="100" y1="130" x2="158" y2="50" stroke="#388e3c" stroke-width="4" stroke-linecap="round"/><line x1="100" y1="124" x2="68" y2="28" stroke="#43a047" stroke-width="3.5" stroke-linecap="round"/><line x1="100" y1="118" x2="136" y2="32" stroke="#43a047" stroke-width="3.5" stroke-linecap="round"/><line x1="100" y1="112" x2="100" y2="22" stroke="#2e7d32" stroke-width="3.5" stroke-linecap="round"/><ellipse cx="28" cy="65" rx="22" ry="7" fill="#66bb6a" transform="rotate(-32 28 65)"/><ellipse cx="172" cy="60" rx="22" ry="7" fill="#66bb6a" transform="rotate(32 172 60)"/><ellipse cx="45" cy="43" rx="20" ry="6" fill="#81c784" transform="rotate(-26 45 43)"/><ellipse cx="158" cy="48" rx="20" ry="6" fill="#81c784" transform="rotate(26 158 48)"/><ellipse cx="68" cy="26" rx="17" ry="6" fill="#66bb6a" transform="rotate(-12 68 26)"/><ellipse cx="136" cy="30" rx="17" ry="6" fill="#66bb6a" transform="rotate(12 136 30)"/><ellipse cx="100" cy="20" rx="15" ry="5" fill="#a5d6a7"/></svg>',
@@ -363,14 +483,19 @@ function save(p){try{localStorage.setItem(SK,JSON.stringify(p));}catch(e){}}
 
 var plants = (function(){
   var saved = load();
-  if(!saved) return JSON.parse(JSON.stringify(DEF));
-  saved.forEach(function(p){
+  if(!saved){
+    var fresh=JSON.parse(JSON.stringify(DEF));
+    fresh.forEach(function(p,i){p.color=PLANT_COLORS[i%PLANT_COLORS.length];});
+    return fresh;
+  }
+  saved.forEach(function(p,i){
     if(!p.history)p.history=[];
-    // Migrate: add sd from DEF if missing
     if(!p.sd){
       var def=DEF.find(function(d){return d.id===p.id;});
       p.sd=def?def.sd:[p.days,p.days,p.days,p.days];
     }
+    // Migrate: assign default color if missing
+    if(!p.color) p.color=PLANT_COLORS[i%PLANT_COLORS.length];
   });
   return saved;
 })();
@@ -415,18 +540,23 @@ function getVisual(p, w, h){
 var curTab = 'plants';
 function switchTab(t){
   curTab = t;
-  ['plants','history','stats'].forEach(function(x){
-    document.getElementById(x+'Page').style.display = t===x?(x==='plants'?'block':'block'):'none';
-    var cls = document.getElementById('tab'+x.charAt(0).toUpperCase()+x.slice(1)).classList;
-    t===x ? cls.add('active') : cls.remove('active');
+  ['plants','calendar','dash','history','stats'].forEach(function(x){
+    var page = document.getElementById(x+'Page');
+    if(page) page.style.display = t===x?'block':'none';
+    var tabEl = document.getElementById('tab'+x.charAt(0).toUpperCase()+x.slice(1));
+    if(tabEl){ t===x?tabEl.classList.add('active'):tabEl.classList.remove('active'); }
   });
   document.getElementById('fabBtn').style.display = t==='plants'?'flex':'none';
   if(t==='history') renderHistory();
   if(t==='stats') renderStats();
+  if(t==='calendar') renderCalendar();
+  if(t==='dash') renderDash();
 }
 // init visibility
 document.getElementById('historyPage').style.display='none';
 document.getElementById('statsPage').style.display='none';
+document.getElementById('calendarPage').style.display='none';
+document.getElementById('dashPage').style.display='none';
 
 // ── RENDER PLANTS ─────────────────────────────────────
 function render(){
@@ -542,6 +672,9 @@ function openEdit(id){
   var prev=document.getElementById('ePrev');
   if(p.photo){prev.src=p.photo;prev.style.display='block';}
   else{prev.src='';prev.style.display='none';}
+  // Build color palette
+  var defaultColor = p.color || getPlantColor(plants.indexOf(p));
+  buildColorPalette('editColorPalette','eColor', defaultColor);
   document.getElementById('editOv').classList.add('open');
 }
 
@@ -562,6 +695,8 @@ function saveEdit(){
   p.temp=document.getElementById('eTp').value.trim()||p.temp;
   p.notes=document.getElementById('eNt').value.trim();
   if(editPhoto) p.photo=editPhoto;
+  var chosenColor=document.getElementById('eColor').value;
+  if(chosenColor) p.color=chosenColor;
   save(plants); closeOv('editOv'); render();
   toast(name+' actualizada');
 }
@@ -582,6 +717,9 @@ function openAdd(){
   var prev=document.getElementById('fPrev');
   prev.src='';prev.style.display='none';
   newPhoto=null;
+  // Pick a default color for new plant (next in palette)
+  var defColor = PLANT_COLORS[plants.length % PLANT_COLORS.length];
+  buildColorPalette('addColorPalette','nColor', defColor);
   document.getElementById('addOv').classList.add('open');
 }
 
@@ -600,7 +738,7 @@ function addPlant(){
     light:document.getElementById('nLt').value.trim()||'Luz indirecta',
     temp:document.getElementById('nTp').value.trim()||'18-25 C',
     notes:document.getElementById('nNt').value.trim()||'',
-    lw:null,photo:newPhoto||null,history:[]
+    lw:null,photo:newPhoto||null,history:[],color:document.getElementById('nColor').value||PLANT_COLORS[plants.length%PLANT_COLORS.length]
   });
   save(plants); closeOv('addOv'); render();
   toast(name+' añadida'); newPhoto=null;
@@ -875,6 +1013,291 @@ if(typeof Notification!=='undefined' && Notification.permission==='granted'){
   }
 }
 
+
+// ── CALENDAR ──────────────────────────────────────────
+
+
+
+// Distinct colors per plant (cycle through palette)
+
+
+function getPlantColor(idxOrPlant){
+  if(typeof idxOrPlant === 'object' && idxOrPlant !== null){
+    if(idxOrPlant.color) return idxOrPlant.color;
+    var idx = plants.indexOf(idxOrPlant);
+    return PLANT_COLORS[idx>=0?idx:0];
+  }
+  return PLANT_COLORS[idxOrPlant % PLANT_COLORS.length];
+}
+
+function buildColorPalette(containerId, inputId, selectedColor){
+  var container = document.getElementById(containerId);
+  if(!container) return;
+  container.innerHTML = '';
+  PALETTE_DISPLAY.forEach(function(col){
+    var sw = document.createElement('div');
+    sw.className = 'color-swatch' + (col === selectedColor ? ' selected' : '');
+    sw.style.background = col;
+    if(col === '#ffffff') sw.style.border = '1px solid #ddd';
+    sw.title = col;
+    sw.addEventListener('click', function(){
+      document.getElementById(inputId).value = col;
+      container.querySelectorAll('.color-swatch').forEach(function(s){ s.classList.remove('selected'); });
+      sw.classList.add('selected');
+    });
+    container.appendChild(sw);
+  });
+  document.getElementById(inputId).value = selectedColor || '';
+}
+
+function selectColor(containerId, inputId, color){
+  document.getElementById(inputId).value = color;
+  var container = document.getElementById(containerId);
+  if(container) container.querySelectorAll('.color-swatch').forEach(function(s){
+    s.classList.toggle('selected', s.title === color);
+  });
+}
+
+// year/month are JS 0-based (month: 0=Jan ... 11=Dec)
+// Returns map keyed as "YYYY-M-D" (no zero padding, JS month+1)
+function getWaterDatesForMonth(year, month){
+  var map = {};
+  // monthStart/End use JS Date constructor (month is 0-based) — correct
+  var monthStart = new Date(year, month, 1);
+  var monthEnd   = new Date(year, month+1, 0, 23, 59, 59);
+  plants.forEach(function(p){
+    var eff = getEffectiveDays(p);
+    if(!eff || eff <= 0) return;
+    var baseTime = p.lw ? new Date(p.lw).getTime() : Date.now();
+    var effMs = eff * 86400000;
+    // Find starting offset: first n so that base+n*effMs >= monthStart
+    var n = Math.floor((monthStart.getTime() - baseTime) / effMs) - 1;
+    for(var i = n; i <= n + 60; i++){
+      var ts = baseTime + i * effMs;
+      if(ts > monthEnd.getTime()) break;
+      var d = new Date(ts);
+      if(d >= monthStart){
+        // Key uses JS month+1 to get 1-based month, matching renderCalendar
+        var key = d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();
+        if(!map[key]) map[key] = [];
+        map[key].push(p);
+      }
+    }
+  });
+  return map;
+}
+
+function calPrev(){ calMonth--; if(calMonth<0){calMonth=11;calYear--;} renderCalendar(); }
+function calNext(){ calMonth++; if(calMonth>11){calMonth=0;calYear++;} renderCalendar(); }
+
+function renderCalendar(){
+  document.getElementById('calMonthTitle').textContent = MONTHS[calMonth] + ' ' + calYear;
+  // waterMap keys: "YYYY-M-D" where M is 1-based (JS month+1)
+  var waterMap = getWaterDatesForMonth(calYear, calMonth);
+  var today = new Date();
+  var firstDay = new Date(calYear, calMonth, 1);
+  var startDow = (firstDay.getDay() + 6) % 7; // Mon=0 ... Sun=6
+  var daysInMonth = new Date(calYear, calMonth+1, 0).getDate();
+  var daysInPrev  = new Date(calYear, calMonth, 0).getDate();
+
+  var html = DAYS_SHORT.map(function(d){ return '<div class="cal-dow">'+d+'</div>'; }).join('');
+
+  for(var i = startDow-1; i >= 0; i--){
+    html += '<div class="cal-day other-month"><div class="cal-day-num">'+(daysInPrev-i)+'</div></div>';
+  }
+
+  for(var d = 1; d <= daysInMonth; d++){
+    var isToday = (today.getFullYear()===calYear && today.getMonth()===calMonth && today.getDate()===d);
+    // Key: calMonth is 0-based, so calMonth+1 gives 1-based month
+    var key = calYear+'-'+(calMonth+1)+'-'+d;
+    var plantList = waterMap[key] || [];
+    var events = plantList; // array of plant objects
+    var dots = events.slice(0,5).map(function(p){
+      return '<div class="cal-dot" style="background:'+getPlantColor(p)+'" title="'+p.name+'"></div>';
+    }).join('');
+    html += '<div class="cal-day'+(isToday?' today':'')+'" onclick="openDayDetail('+calYear+','+(calMonth+1)+','+d+')"><div class="cal-day-num">'+d+'</div><div class="cal-dots">'+dots+'</div></div>';
+  }
+  // Next month fill
+  var totalCells = Math.ceil((startDow + daysInMonth) / 7) * 7;
+  var nextDay = 1;
+  for(var c = startDow + daysInMonth; c < totalCells; c++){
+    html += '<div class="cal-day other-month"><div class="cal-day-num">'+nextDay+'</div></div>';
+    nextDay++;
+  }
+  document.getElementById('calGrid').innerHTML = html;
+
+  // Legend
+  var legHtml = '';
+  plants.forEach(function(p,pi){
+    legHtml += '<div class="cal-legend-item"><div class="cal-legend-dot" style="background:'+getPlantColor(p)+'"></div>'+p.name+'</div>';
+  });
+  document.getElementById('calLegend').innerHTML = legHtml;
+
+  // Week view
+  renderWeekView();
+}
+
+function renderWeekView(){
+  var today = new Date(); today.setHours(0,0,0,0);
+  var dow = (today.getDay()+6)%7; // Monday=0
+  var weekStart = new Date(today.getTime() - dow*86400000);
+  var weekHtml = '';
+  var DAY_NAMES = ['Lunes','Martes','Miercoles','Jueves','Viernes','Sabado','Domingo'];
+
+  for(var d=0; d<7; d++){
+    var day = new Date(weekStart.getTime() + d*86400000);
+    var isToday = day.getTime() === today.getTime();
+    var label = DAY_NAMES[d] + ' ' + day.getDate();
+    var dayKey = day.getFullYear()+'-'+(day.getMonth()+1)+'-'+day.getDate();
+    // Find plants to water on this day
+    var toWater = [];
+    plants.forEach(function(p,pi){
+      var eff = getEffectiveDays(p); if(!eff) return;
+      var base = p.lw ? new Date(p.lw) : new Date();
+      var effMs = eff*86400000;
+      var diff = day.getTime() - base.getTime();
+      var rem = ((diff % effMs) + effMs) % effMs;
+      if(rem < 86400000) toWater.push({p:p, pi:pi});
+    });
+    var chipHtml = '';
+    if(toWater.length){
+      toWater.forEach(function(item){
+        var st = status(item.p);
+        var chipClass = st==='urgent'?'urgent-chip':st==='soon'?'soon-chip':'';
+        chipHtml += '<div class="week-plant-chip '+chipClass+'">'
+          +'<div style="width:8px;height:8px;border-radius:50%;background:'+getPlantColor(item.p)+';flex-shrink:0"></div>'
+          +item.p.name+'</div>';
+      });
+    } else {
+      chipHtml = '<div class="week-empty">Sin riegos</div>';
+    }
+    weekHtml += '<div class="week-row">'
+      +'<div class="week-day-header'+(isToday?' today-hdr':'')+'"><span>'+label+(isToday?' — Hoy':'')+'</span></div>'
+      +chipHtml+'</div>';
+  }
+  document.getElementById('weekView').innerHTML = weekHtml;
+}
+
+function openDayDetail(year, month1, day){
+  // month1 is 1-based (January=1)
+  var MONTHS_FULL=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  var date = new Date(year, month1-1, day); // JS Date needs 0-based month
+  date.setHours(0,0,0,0);
+  var isToday = (new Date().toDateString()===date.toDateString());
+  var title = (isToday?'Hoy — ':'')+day+' de '+MONTHS_FULL[month1-1]+' '+year;
+  // Use same key logic as getWaterDatesForMonth for consistency
+  var key = year+'-'+month1+'-'+day;
+  var map = getWaterDatesForMonth(year, month1-1); // pass 0-based month
+  var toWater = map[key] || [];
+  document.getElementById('dayDetailTitle').textContent = title;
+  if(!toWater.length){
+    document.getElementById('dayDetailList').innerHTML =
+      '<div style="text-align:center;padding:20px;color:#aaa;font-size:14px">No toca regar ninguna planta este dia</div>';
+  } else {
+    var html='';
+    toWater.forEach(function(p){
+      html+='<div class="day-detail-item">'
+        +getVisual(p,44,44)
+        +'<div style="flex:1;min-width:0">'
+        +'<div class="day-detail-name">'+p.name+'</div>'
+        +'<div class="day-detail-sci">'+p.sci+'</div>'
+        +'<div style="margin-top:3px;font-size:11px;color:#1a5c38;font-weight:bold">'
+        +'Cada '+getEffectiveDays(p)+' dias en '+SEASON_NAMES[curSeason]
+        +'</div>'
+        +'</div>'
+        +'<div style="width:14px;height:14px;border-radius:50%;background:'+getPlantColor(p)+';flex-shrink:0"></div>'
+        +'</div>';
+    });
+    document.getElementById('dayDetailList').innerHTML = html;
+  }
+  document.getElementById('dayDetailOv').classList.add('open');
+}
+
+// ── DASHBOARD ─────────────────────────────────────────
+function renderDash(){
+  var urgent = plants.filter(function(p){return status(p)==='urgent';});
+  var soon   = plants.filter(function(p){return status(p)==='soon';});
+  var ok     = plants.filter(function(p){return status(p)==='ok';});
+
+  // Hero
+  var heroMsg, heroSub;
+  if(urgent.length>0){
+    heroMsg = urgent.length;
+    heroSub = urgent.length===1 ? urgent[0].name+' necesita agua hoy' : 'plantas necesitan agua hoy';
+    document.getElementById('dashHero').style.background='#b71c1c';
+  } else if(soon.length>0){
+    heroMsg = soon.length;
+    heroSub = 'plantas necesitan agua pronto';
+    document.getElementById('dashHero').style.background='#e65100';
+  } else {
+    heroMsg = '✓';
+    heroSub = 'Todas las plantas al dia';
+    document.getElementById('dashHero').style.background='#1a5c38';
+  }
+  document.getElementById('dashHero').innerHTML =
+    '<div class="dash-hero-title">Estado del jardin</div>'
+    +'<div class="dash-hero-num">'+heroMsg+'</div>'
+    +'<div class="dash-hero-sub">'+heroSub+'</div>';
+
+  // Grid stats
+  var totalW = 0;
+  plants.forEach(function(p){ totalW += (p.history&&p.history.length)||0; });
+  var nextDays = plants.map(function(p){ return Math.max(0,daysLeft(p)); });
+  var avgNext = nextDays.length ? Math.round(nextDays.reduce(function(a,b){return a+b;},0)/nextDays.length) : 0;
+  document.getElementById('dashGrid').innerHTML =
+    mkDashCard(plants.length,'Plantas','en coleccion')
+    +mkDashCard(totalW,'Riegos','registrados')
+    +mkDashCard(urgent.length+soon.length,'Pendientes','en los proximos 2 dias')
+    +mkDashCard(avgNext,'Dias','de media hasta proximo riego');
+
+  // Next waterings list
+  var sorted = plants.slice().sort(function(a,b){return daysLeft(a)-daysLeft(b);}).slice(0,5);
+  var nextHtml = '<div class="dash-next-title">Proximos riegos</div>';
+  sorted.forEach(function(p){
+    var d = daysLeft(p); var st = status(p);
+    var label = d<=0?'Hoy':d===1?'Manana':'En '+d+' dias';
+    nextHtml += '<div class="dash-next-item">'
+      +getVisual(p,36,36)
+      +'<div class="dash-next-name">'+p.name+'</div>'
+      +'<div class="dash-next-days '+st+'">'+label+'</div>'
+      +'</div>';
+  });
+  document.getElementById('dashNext').innerHTML = nextHtml;
+
+  // Streak / fun fact
+  var mostW = null, mostCnt = 0;
+  plants.forEach(function(p){
+    var cnt=(p.history&&p.history.length)||0;
+    if(cnt>mostCnt){mostCnt=cnt;mostW=p;}
+  });
+  var streakHtml = '<div class="dash-streak-title">Dato curioso</div>';
+  if(mostW && mostCnt>0){
+    // Days since collection started (oldest history entry)
+    var oldest = null;
+    plants.forEach(function(p){
+      (p.history||[]).forEach(function(iso){
+        if(!oldest||new Date(iso)<oldest) oldest=new Date(iso);
+      });
+    });
+    var daysSince = oldest ? Math.floor((Date.now()-oldest.getTime())/86400000) : 0;
+    streakHtml += '<div style="font-size:14px;color:#7d5200;line-height:1.6">'
+      +(daysSince>0?'Llevas <b>'+daysSince+' dias</b> cuidando tu jardin. ':'')
+      +'Tu planta mas regada es <b>'+mostW.name+'</b> con <b>'+mostCnt+' riegos</b>.'
+      +'</div>';
+  } else {
+    streakHtml += '<div style="font-size:13px;color:#7d5200">Empieza a registrar riegos para ver tus estadisticas aqui.</div>';
+  }
+  document.getElementById('dashStreak').innerHTML = streakHtml;
+}
+
+function mkDashCard(val,label,sub){
+  return '<div class="dash-card">'
+    +'<div class="dash-card-num">'+val+'</div>'
+    +'<div class="dash-card-lbl">'+label+'</div>'
+    +(sub?'<div style="font-size:10px;color:#bbb;margin-top:2px">'+sub+'</div>':'')
+    +'</div>';
+}
+
 // ── INIT ──────────────────────────────────────────────
 updateSeasonUI();
 render();
@@ -886,5 +1309,13 @@ setTimeout(function(){
   }
 },800);
 </script>
+
+<div class="day-detail-overlay" id="dayDetailOv" onclick="if(event.target===this)closeOv('dayDetailOv')">
+  <div class="day-detail-box">
+    <div class="day-detail-title" id="dayDetailTitle"></div>
+    <div id="dayDetailList"></div>
+    <button class="day-detail-close" onclick="closeOv('dayDetailOv')">Cerrar</button>
+  </div>
+</div>
 </body>
 </html>
